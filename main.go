@@ -10,6 +10,8 @@ import (
 	"strconv"
 )
 
+var stdin = os.Stdin
+
 // Entry shows executed result.
 type Entry struct {
 	// Page is target URL.
@@ -49,7 +51,7 @@ func main() {
 
 	  268%
 	*/
-	ss := readLines(os.Stdin)
+	ss := readLines(stdin)
 	for _, s := range ss {
 		fmt.Println(s)
 	}
