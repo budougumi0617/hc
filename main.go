@@ -1,6 +1,14 @@
 package main
 
-import "net/url"
+import (
+	"bufio"
+	"fmt"
+	"io"
+	"log"
+	"net/url"
+	"os"
+	"strconv"
+)
 
 // Entry shows executed result.
 type Entry struct {
@@ -10,6 +18,18 @@ type Entry struct {
 	HBC int
 	// Err is error if API call failed.
 	Err error
+}
+
+func readLines(in io.Reader) []string {
+	var ss []string
+	s := bufio.NewScanner(in)
+	for s.Scan() {
+		ss = append(ss, strconv.Quote(s.Text()))
+	}
+	if s.Err() != nil {
+		log.Fatal(s.Err())
+	}
+	return ss
 }
 
 func main() {
@@ -29,6 +49,10 @@ func main() {
 
 	  268%
 	*/
+	ss := readLines(os.Stdin)
+	for _, s := range ss {
+		fmt.Println(s)
+	}
 	// TODO build request
 	// TODO Execute GET
 	// TODO Parse response
