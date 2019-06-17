@@ -4,10 +4,13 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"net/url"
 	"os"
 	"strconv"
+	"time"
 )
 
 var stdin = os.Stdin
@@ -46,6 +49,39 @@ func build(ss []string) []*Entry {
 	}
 	return es
 }
+
+const (
+	hatenaEP = "http://api.b.st-hatena.com/entry.count?url="
+)
+
+func fillHBC(es []*Entry) {
+	cli := &http.Client{
+		Timeout: 3 * time.Second,
+	}
+	for _, e := range es {
+		q := url.QueryEscape(e.Page.String())
+		resp, err := cli.Get(hatenaEP + q)
+		if err != nil {
+			fmt.Printf("err = %+v\n", err)
+			e.Err = err
+			break
+		}
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			fmt.Printf("err = %+v\n", err)
+			e.Err = err
+			break
+		}
+		hbc, err := strconv.Atoi(string(body))
+		if err != nil {
+			fmt.Printf("err = %+v\n", err)
+			e.Err = err
+			break
+		}
+		e.HBC = hbc
+	}
+}
+
 func main() {
 	/**
 	  $ curl -D - -X GET http://api.b.st-hatena.com/entry.count?url=https%3A%2F%2Fbudougumi0617.github.io%2F2019%2F05%2F12%2Fpass-aws-solution-architect-associate%2F
@@ -64,9 +100,15 @@ func main() {
 	  268%
 	*/
 	ss := readLines(stdin)
-	for _, s := range ss {
-		fmt.Println(s)
+	es := build(ss)
+	fillHBC(es)
+
+	for _, e := range es {
+		if e.Err == nil {
+			fmt.Printf("%5d\t%s\n", e.HBC, e.Page.String())
+		}
 	}
+
 	// TODO build request
 	// TODO Execute GET
 	// TODO Parse response
