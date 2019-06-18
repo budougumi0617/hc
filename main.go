@@ -108,10 +108,4 @@ func main() {
 			fmt.Printf("%5d\t%s\n", e.HBC, e.Page.String())
 		}
 	}
-
-	// TODO build request
-	// TODO Execute GET
-	// TODO Parse response
-	// TODO show results
-	// TODO Repeat for input URLs
 }
