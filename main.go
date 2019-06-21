@@ -45,7 +45,6 @@ func build(ss []string) []*Entry {
 			Page: u,
 			Err:  err,
 		})
-
 	}
 	return es
 }
@@ -59,22 +58,22 @@ func fillHBC(es []*Entry) {
 		Timeout: 3 * time.Second,
 	}
 	for _, e := range es {
+		if e.Err != nil {
+			break
+		}
 		q := url.QueryEscape(e.Page.String())
 		resp, err := cli.Get(hatenaEP + q)
 		if err != nil {
-			fmt.Printf("err = %+v\n", err)
 			e.Err = err
 			break
 		}
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			fmt.Printf("err = %+v\n", err)
 			e.Err = err
 			break
 		}
 		hbc, err := strconv.Atoi(string(body))
 		if err != nil {
-			fmt.Printf("err = %+v\n", err)
 			e.Err = err
 			break
 		}
@@ -104,6 +103,7 @@ func main() {
 	fillHBC(es)
 
 	for _, e := range es {
+		// Report err to STDERR
 		if e.Err == nil {
 			fmt.Printf("%5d\t%s\n", e.HBC, e.Page.String())
 		}
