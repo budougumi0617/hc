@@ -12,3 +12,6 @@
 *.out
 
 .envrc
+
+hc
+urls.txt

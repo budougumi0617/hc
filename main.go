@@ -1,4 +1,4 @@
-package main
+package hc
 
 import (
 	"bufio"
@@ -13,7 +13,11 @@ import (
 	"time"
 )
 
-var stdin = os.Stdin
+// Client TODO W.I.P.
+type Client struct {
+	stdin, stderr io.Reader
+	stdout        io.Writer
+}
 
 // Entry shows executed result.
 type Entry struct {
@@ -81,7 +85,8 @@ func fillHBC(es []*Entry) {
 	}
 }
 
-func main() {
+// Execute : TODO W.I.P.
+func (c *Client) Execute() int {
 	/**
 	  $ curl -D - -X GET http://api.b.st-hatena.com/entry.count?url=https%3A%2F%2Fbudougumi0617.github.io%2F2019%2F05%2F12%2Fpass-aws-solution-architect-associate%2F
 	  HTTP/1.1 200 OK
@@ -98,7 +103,7 @@ func main() {
 
 	  268%
 	*/
-	ss := readLines(stdin)
+	ss := readLines(os.Stdin)
 	es := build(ss)
 	fillHBC(es)
 
@@ -108,4 +113,5 @@ func main() {
 			fmt.Printf("%5d\t%s\n", e.HBC, e.Page.String())
 		}
 	}
+	return 0
 }
