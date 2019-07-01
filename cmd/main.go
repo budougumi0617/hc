@@ -16,7 +16,11 @@ func main() {
 	flag.BoolVar(&printHeaderFlag, "p", false, "print result header")
 	flag.Parse()
 
-	cli := &hc.Client{}
+	cli := &hc.Client{
+		Stdin:  os.Stdin,
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
+	}
 	os.Exit(cli.Execute())
 
 }

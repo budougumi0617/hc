@@ -8,15 +8,14 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"os"
 	"strconv"
 	"time"
 )
 
 // Client TODO W.I.P.
 type Client struct {
-	stdin, stderr io.Reader
-	stdout        io.Writer
+	Stdin          io.Reader
+	Stdout, Stderr io.Writer
 }
 
 // Entry shows executed result.
@@ -29,9 +28,9 @@ type Entry struct {
 	Err error
 }
 
-func readLines(in io.Reader) []string {
+func (c *Client) readLines() []string {
 	var ss []string
-	s := bufio.NewScanner(in)
+	s := bufio.NewScanner(c.Stdin)
 	for s.Scan() {
 		ss = append(ss, s.Text())
 	}
@@ -103,14 +102,14 @@ func (c *Client) Execute() int {
 
 	  268%
 	*/
-	ss := readLines(os.Stdin)
+	ss := c.readLines()
 	es := build(ss)
 	fillHBC(es)
 
 	for _, e := range es {
 		// Report err to STDERR
 		if e.Err == nil {
-			fmt.Printf("%5d\t%s\n", e.HBC, e.Page.String())
+			fmt.Fprintf(c.Stdout, "%5d\t%s\n", e.HBC, e.Page.String())
 		}
 	}
 	return 0
