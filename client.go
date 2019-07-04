@@ -12,7 +12,14 @@ import (
 	"time"
 )
 
-// Client TODO W.I.P.
+// Build returns URL's with Hatena bookmark count.
+func Build(urls []string) []*Entry {
+	es := build(urls)
+	fillHBC(es)
+	return es
+}
+
+// Client manages input and output.
 type Client struct {
 	Stdin          io.Reader
 	Stdout, Stderr io.Writer
@@ -84,7 +91,7 @@ func fillHBC(es []*Entry) {
 	}
 }
 
-// Execute : TODO W.I.P.
+// Execute prints each bookmark counts and URL.
 func (c *Client) Execute() int {
 	/**
 	  $ curl -D - -X GET http://api.b.st-hatena.com/entry.count?url=https%3A%2F%2Fbudougumi0617.github.io%2F2019%2F05%2F12%2Fpass-aws-solution-architect-associate%2F
