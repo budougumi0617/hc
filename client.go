@@ -15,7 +15,10 @@ import (
 // Build returns URL's with Hatena bookmark count.
 func Build(urls []string) []*Entry {
 	es := build(urls)
-	fillHBC(es)
+	cli := &http.Client{
+		Timeout: 3 * time.Second,
+	}
+	fillHBC(cli, es)
 	return es
 }
 
@@ -63,10 +66,12 @@ const (
 	hatenaEP = "http://api.b.st-hatena.com/entry.count?url="
 )
 
-func fillHBC(es []*Entry) {
-	cli := &http.Client{
-		Timeout: 3 * time.Second,
-	}
+// HBCGetter get Hatena bookmark count for URL string.
+type HBCGetter interface {
+	Get(string) (*http.Response, error)
+}
+
+func fillHBC(cli HBCGetter, es []*Entry) {
 	for _, e := range es {
 		if e.Err != nil {
 			break
@@ -111,7 +116,10 @@ func (c *Client) Execute() int {
 	*/
 	ss := c.readLines()
 	es := build(ss)
-	fillHBC(es)
+	cli := &http.Client{
+		Timeout: 3 * time.Second,
+	}
+	fillHBC(cli, es)
 
 	for _, e := range es {
 		// Report err to STDERR
